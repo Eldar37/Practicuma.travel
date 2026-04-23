@@ -1,0 +1,156 @@
+@import 'leaflet/dist/leaflet.css';
+@import 'leaflet.markercluster/dist/MarkerCluster.css';
+@import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-heading: 'Plus Jakarta Sans', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --color-primary: #0086b3;
+  --color-accent: #f6861f;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #fcfaf5;
+  color: #334155;
+}
+
+::selection {
+  background: rgba(0, 134, 179, 0.18);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(148, 163, 184, 0.08);
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(100, 116, 139, 0.35);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(51, 65, 85, 0.48);
+}
+
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+  border-radius: 1.5rem;
+  font-family: var(--font-body);
+  z-index: 0;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 1rem;
+  padding: 0.25rem;
+}
+
+.leaflet-popup-content {
+  margin: 0;
+}
+
+.leaflet-control-zoom {
+  border: none !important;
+  box-shadow: 0 12px 30px -18px rgba(15, 23, 42, 0.4);
+  overflow: hidden;
+}
+
+.leaflet-control-zoom a {
+  display: grid !important;
+  place-items: center;
+  width: 38px !important;
+  height: 38px !important;
+  background: white !important;
+  color: #0f172a !important;
+}
+
+.leaflet-control-scale-line {
+  border: none !important;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.72) !important;
+  color: white !important;
+  padding: 0.3rem 0.6rem !important;
+}
+
+.marker-cluster-small,
+.marker-cluster-medium,
+.marker-cluster-large {
+  background: transparent;
+}
+
+.marker-cluster div {
+  width: 44px !important;
+  height: 44px !important;
+  margin-left: 0 !important;
+  margin-top: 0 !important;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(0, 134, 179, 0.95), rgba(22, 49, 66, 0.95));
+  color: white;
+  display: grid;
+  place-items: center;
+  border: 4px solid rgba(255, 255, 255, 0.45);
+  font-weight: 700;
+  box-shadow: 0 12px 26px -14px rgba(0, 134, 179, 0.7);
+}
+
+.masonry-grid {
+  column-gap: 1.5rem;
+}
+
+.masonry-grid > * {
+  break-inside: avoid;
+  margin-bottom: 1.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-slate-200;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading text-dark;
+  }
+
+  a,
+  button,
+  input,
+  textarea,
+  select {
+    @apply focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/20;
+  }
+}
+
+@layer components {
+  .container-shell {
+    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .section-shell {
+    @apply container-shell py-20 sm:py-24;
+  }
+
+  .card-surface {
+    @apply rounded-[2rem] border border-white/70 bg-white shadow-card;
+  }
+
+  .eyebrow {
+    @apply inline-flex rounded-full bg-primary/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-primary;
+  }
+}
