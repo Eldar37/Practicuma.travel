@@ -10,22 +10,25 @@ import { Menu } from 'lucide-react';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { Logo } from '@/components/layout/Logo';
 import { MobileMenu } from '@/components/layout/MobileMenu';
+import { PreferenceControls } from '@/components/layout/PreferenceControls';
+import { useSitePreferences } from '@/components/preferences/SitePreferencesProvider';
 import { Button, buttonStyles } from '@/components/ui/Button';
 import { PARTNER_TELEGRAM_URL } from '@/lib/contacts';
 import { cn } from '@/lib/utils';
-
-const links = [
-  { href: '/tours', label: 'Туры' },
-  { href: '/map', label: 'Карта' },
-  { href: '/content', label: 'Контент' },
-  { href: '/about', label: 'О нас' }
-];
 
 export function Navbar() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { hydrated, openAuth, logout, user } = useAuth();
+  const { t } = useSitePreferences();
+
+  const links = [
+    { href: '/tours', label: t('nav.tours') },
+    { href: '/map', label: t('nav.map') },
+    { href: '/content', label: t('nav.content') },
+    { href: '/about', label: t('nav.about') }
+  ];
 
   useEffect(() => {
     const onScroll = () => {
@@ -73,6 +76,7 @@ export function Navbar() {
             })}
           </nav>
           <div className="hidden items-center gap-3 lg:flex">
+            <PreferenceControls inverse={isHomeTop} />
             {hydrated && user ? (
               <>
                 <Link
@@ -85,7 +89,7 @@ export function Navbar() {
                   {user.name}
                 </Link>
                 <Button variant={isHomeTop ? 'secondary' : 'primary'} onClick={logout}>
-                  Выйти
+                  {t('nav.logout')}
                 </Button>
               </>
             ) : (
@@ -97,7 +101,7 @@ export function Navbar() {
                   })}
                   onClick={() => openAuth('login')}
                 >
-                  Войти
+                  {t('nav.login')}
                 </button>
                 <a
                   href={PARTNER_TELEGRAM_URL}
@@ -105,13 +109,13 @@ export function Navbar() {
                   rel="noreferrer"
                   className={buttonStyles({ variant: isHomeTop ? 'secondary' : 'primary', size: 'md' })}
                 >
-                  Стать партнёром
+                  {t('nav.partner')}
                 </a>
               </>
             )}
           </div>
           <button
-            aria-label="Открыть мобильное меню"
+            aria-label={t('nav.menu')}
             className={cn(
               'rounded-full border p-2 transition lg:hidden',
               isHomeTop ? 'border-white/50 text-white' : 'border-slate-200 text-slate-700'

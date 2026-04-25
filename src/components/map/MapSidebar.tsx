@@ -4,9 +4,10 @@ import Image from 'next/image';
 
 import { Search } from 'lucide-react';
 
+import { useSitePreferences } from '@/components/preferences/SitePreferencesProvider';
 import { Badge } from '@/components/ui/Badge';
 import type { MapPointRecord } from '@/lib/types';
-import { mapTypeLabels, regionLabels } from '@/lib/utils';
+import { mapTypeLabelsByLocale, regionLabelsByLocale } from '@/lib/i18n';
 
 interface MapSidebarProps {
   points: MapPointRecord[];
@@ -29,11 +30,13 @@ export function MapSidebar({
   onRegionChange,
   onPointSelect
 }: MapSidebarProps) {
+  const { locale, t } = useSitePreferences();
+
   return (
-    <div className="flex h-full flex-col gap-5 rounded-[2rem] bg-white p-5 shadow-card">
+    <div className="flex h-full flex-col gap-5 rounded-[2rem] bg-white p-5 shadow-card dark:bg-slate-900">
       <div>
-        <h2 className="font-heading text-2xl font-extrabold">Карта Кыргызстана</h2>
-        <p className="mt-2 text-sm leading-6 text-slate-500">Выбирайте регионы, туры и природные точки прямо с карты.</p>
+        <h2 className="font-heading text-2xl font-extrabold dark:text-white">{t('mapPage.title')}</h2>
+        <p className="mt-2 text-sm leading-6 text-slate-500">{t('mapPage.description')}</p>
       </div>
 
       <label className="relative block">
@@ -41,8 +44,8 @@ export function MapSidebar({
         <input
           value={search}
           onChange={(event) => onSearchChange(event.target.value)}
-          placeholder="Поиск места..."
-          className="w-full rounded-2xl border border-slate-200 py-3 pl-11 pr-4 text-sm"
+          placeholder={t('mapPage.search')}
+          className="w-full rounded-2xl border border-slate-200 py-3 pl-11 pr-4 text-sm dark:border-slate-700 dark:bg-slate-950"
         />
       </label>
 
@@ -55,18 +58,18 @@ export function MapSidebar({
             }`}
             onClick={() => onTypeChange(type)}
           >
-            {type === 'all' ? 'Все' : mapTypeLabels[type]}
+            {type === 'all' ? t('mapPage.all') : mapTypeLabelsByLocale[locale][type]}
           </button>
         ))}
       </div>
 
       <select
-        className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700"
+        className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
         value={selectedRegion}
         onChange={(event) => onRegionChange(event.target.value)}
       >
-        <option value="">Все регионы</option>
-        {Object.entries(regionLabels).map(([value, label]) => (
+        <option value="">{t('mapPage.allRegions')}</option>
+        {Object.entries(regionLabelsByLocale[locale]).map(([value, label]) => (
           <option key={value} value={value}>
             {label}
           </option>
@@ -91,16 +94,16 @@ export function MapSidebar({
                 </div>
                 <div className="mt-1 flex items-center gap-2">
                   <Badge variant={point.type === 'tour' ? 'primary' : point.type === 'attraction' ? 'accent' : 'dark'}>
-                    {mapTypeLabels[point.type]}
+                    {mapTypeLabelsByLocale[locale][point.type]}
                   </Badge>
-                  <span className="text-xs text-slate-400">{regionLabels[point.region]}</span>
+                  <span className="text-xs text-slate-400">{regionLabelsByLocale[locale][point.region]}</span>
                 </div>
               </div>
             </button>
           ))}
           {!points.length ? (
             <div className="rounded-[1.5rem] border border-dashed border-slate-200 px-4 py-10 text-center text-sm text-slate-500">
-              По выбранным фильтрам ничего не найдено.
+              {t('mapPage.empty')}
             </div>
           ) : null}
         </div>

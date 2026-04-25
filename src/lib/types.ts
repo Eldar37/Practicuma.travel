@@ -167,5 +167,5 @@ export interface AIRecommendationResponse {
   summary: string;
   recommendations: AIRecommendation[];
   preferences: ResolvedAIPreferences;
-  source: 'hf' | 'fallback';
+  source: 'ollama' | 'fallback';
 }

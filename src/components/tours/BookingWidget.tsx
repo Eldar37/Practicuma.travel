@@ -6,10 +6,11 @@ import Link from 'next/link';
 import { CheckCircle2, CreditCard, Mail, Phone, ShieldCheck, UserRound, Wallet } from 'lucide-react';
 
 import { useAuth } from '@/components/auth/AuthProvider';
+import { useSitePreferences } from '@/components/preferences/SitePreferencesProvider';
 import { Modal } from '@/components/ui/Modal';
 import { Button, buttonStyles } from '@/components/ui/Button';
 import type { BookingRecord, Tour } from '@/lib/types';
-import { formatCurrency, formatDateRange } from '@/lib/utils';
+import { formatCurrencyByLocale, formatDateRangeByLocale } from '@/lib/i18n';
 
 interface BookingWidgetProps {
   tour: Tour;
@@ -19,6 +20,7 @@ type BookingStep = 1 | 2 | 3 | 4;
 
 export function BookingWidget({ tour }: BookingWidgetProps) {
   const { openAuth, user } = useAuth();
+  const { locale } = useSitePreferences();
   const [date, setDate] = useState(tour.startDate);
   const [people, setPeople] = useState(tour.groupSize.min);
   const [open, setOpen] = useState(false);
@@ -94,17 +96,114 @@ export function BookingWidget({ tour }: BookingWidgetProps) {
     setStep((current) => (current < 4 ? ((current + 1) as BookingStep) : current));
   };
 
+  const labels =
+    locale === 'en'
+      ? {
+          from: 'from',
+          perPerson: 'per person',
+          departureDate: 'Departure date',
+          travelers: 'Travelers',
+          total: 'Total',
+          book: 'Book now',
+          ask: 'Ask a question',
+          securePayment: 'Secure payment',
+          refund: 'Refund guarantee',
+          support: '24/7 support',
+          bookingTitle: 'Tour booking',
+          authRequired: 'Sign in to confirm the booking. After login, your data will be filled automatically.',
+          step: 'Step',
+          of: 'of',
+          fullName: 'Full name',
+          phone: 'Phone',
+          participants: 'Participants',
+          participant: 'Participant',
+          age: 'Age',
+          payment: 'Payment',
+          cardNumber: 'Card number',
+          expiry: 'Expiry date',
+          toPay: 'To pay',
+          confirmed: 'Booking confirmed',
+          bookingNumber: 'Booking number',
+          close: 'Close',
+          back: 'Back',
+          confirmAndPay: 'Confirm and pay',
+          next: 'Next'
+        }
+      : locale === 'ky'
+        ? {
+            from: 'баштап',
+            perPerson: 'адамга',
+            departureDate: 'Чыгуу датасы',
+            travelers: 'Адам саны',
+            total: 'Жалпы',
+            book: 'Брондоо',
+            ask: 'Суроо берүү',
+            securePayment: 'Коопсуз төлөм',
+            refund: 'Кайтаруу кепилдиги',
+            support: '24/7 колдоо',
+            bookingTitle: 'Турду брондоо',
+            authRequired: 'Брондоону ырастоо үчүн кирүү керек. Киргенден кийин маалымат автоматтык толукталат.',
+            step: 'Кадам',
+            of: 'ичинен',
+            fullName: 'Аты-жөнү',
+            phone: 'Телефон',
+            participants: 'Катышуучулар',
+            participant: 'Катышуучу',
+            age: 'Жашы',
+            payment: 'Төлөм',
+            cardNumber: 'Карта номери',
+            expiry: 'Жарактуулук мөөнөтү',
+            toPay: 'Төлөнөт',
+            confirmed: 'Брондоо тастыкталды',
+            bookingNumber: 'Брондоо номери',
+            close: 'Жабуу',
+            back: 'Артка',
+            confirmAndPay: 'Тастыктап төлөө',
+            next: 'Улантуу'
+          }
+        : {
+            from: 'от',
+            perPerson: 'за человека',
+            departureDate: 'Дата выезда',
+            travelers: 'Количество людей',
+            total: 'Итого',
+            book: 'Забронировать',
+            ask: 'Задать вопрос',
+            securePayment: 'Безопасная оплата',
+            refund: 'Гарантия возврата',
+            support: 'Поддержка 24/7',
+            bookingTitle: 'Бронирование тура',
+            authRequired: 'Для подтверждения бронирования нужна авторизация. После входа данные подтянутся автоматически.',
+            step: 'Шаг',
+            of: 'из',
+            fullName: 'Имя и фамилия',
+            phone: 'Телефон',
+            participants: 'Участники',
+            participant: 'Участник',
+            age: 'Возраст',
+            payment: 'Оплата',
+            cardNumber: 'Номер карты',
+            expiry: 'Срок действия',
+            toPay: 'К оплате',
+            confirmed: 'Бронирование подтверждено',
+            bookingNumber: 'Номер бронирования',
+            close: 'Закрыть',
+            back: 'Назад',
+            confirmAndPay: 'Подтвердить и оплатить',
+            next: 'Далее'
+          };
+
   return (
     <>
       <div className="card-surface sticky top-28 space-y-6 p-6">
         <div className="space-y-2">
-          <p className="text-sm uppercase tracking-[0.18em] text-slate-400">от</p>
-          <h3 className="font-heading text-4xl font-extrabold text-dark">{formatCurrency(tour.price, tour.currency)}</h3>
-          <p className="text-sm text-slate-500">за человека</p>
+          <p className="text-sm uppercase tracking-[0.18em] text-slate-400">{labels.from}</p>
+          <h3 className="font-heading text-4xl font-extrabold text-dark">{formatCurrencyByLocale(tour.price, tour.currency, locale)}</h3>
+          <p className="text-sm text-slate-500">{labels.perPerson}</p>
         </div>
         <div className="space-y-4">
           <label className="space-y-2 text-sm font-semibold text-slate-700">
-            Дата выезда
+            {labels.departureDate}
             <input
               type="date"
               value={date}
@@ -115,7 +214,7 @@ export function BookingWidget({ tour }: BookingWidgetProps) {
             />
           </label>
           <div className="space-y-2">
-            <span className="text-sm font-semibold text-slate-700">Количество людей</span>
+            <span className="text-sm font-semibold text-slate-700">{labels.travelers}</span>
             <div className="flex items-center justify-between rounded-2xl border border-slate-200 px-4 py-3">
               <button
                 aria-label="Уменьшить количество людей"
@@ -137,12 +236,12 @@ export function BookingWidget({ tour }: BookingWidgetProps) {
         </div>
         <div className="rounded-[1.5rem] bg-slate-50 p-4">
           <div className="flex items-center justify-between text-sm text-slate-500">
-            <span>{people} чел</span>
-            <span>{formatCurrency(tour.price, tour.currency)}</span>
+            <span>{people}</span>
+            <span>{formatCurrencyByLocale(tour.price, tour.currency, locale)}</span>
           </div>
           <div className="mt-3 flex items-center justify-between text-lg font-bold text-dark">
-            <span>Итого</span>
-            <span>{formatCurrency(total, tour.currency)}</span>
+            <span>{labels.total}</span>
+            <span>{formatCurrencyByLocale(total, tour.currency, locale)}</span>
           </div>
         </div>
         <div className="space-y-3">
@@ -159,38 +258,38 @@ export function BookingWidget({ tour }: BookingWidgetProps) {
               setOpen(true);
             }}
           >
-            Забронировать
+            {labels.book}
           </Button>
           <Link href="/help#contacts" className={buttonStyles({ variant: 'ghost', size: 'lg', fullWidth: true })}>
-            Задать вопрос
+            {labels.ask}
           </Link>
         </div>
         <div className="space-y-3 text-sm text-slate-600">
           <div className="flex items-center gap-2">
             <ShieldCheck className="h-4 w-4 text-success" />
-            <span>Безопасная оплата</span>
+            <span>{labels.securePayment}</span>
           </div>
           <div className="flex items-center gap-2">
             <CheckCircle2 className="h-4 w-4 text-success" />
-            <span>Гарантия возврата</span>
+            <span>{labels.refund}</span>
           </div>
           <div className="flex items-center gap-2">
             <Phone className="h-4 w-4 text-success" />
-            <span>Поддержка 24/7</span>
+            <span>{labels.support}</span>
           </div>
         </div>
       </div>
 
-      <Modal open={open} onClose={closeModal} title="Бронирование тура">
+      <Modal open={open} onClose={closeModal} title={labels.bookingTitle}>
         <div className="space-y-8">
           {!user ? (
             <div className="rounded-[1.5rem] bg-accent/10 px-4 py-3 text-sm font-medium text-dark">
-              Для подтверждения бронирования нужна авторизация. После входа данные подтянутся автоматически.
+              {labels.authRequired}
             </div>
           ) : null}
           <div className="space-y-3">
             <div className="flex items-center justify-between text-sm font-semibold text-slate-500">
-              <span>Шаг {step} из 4</span>
+              <span>{labels.step} {step} {labels.of} 4</span>
               <span>{tour.title}</span>
             </div>
             <div className="h-2 rounded-full bg-slate-100">
@@ -201,7 +300,7 @@ export function BookingWidget({ tour }: BookingWidgetProps) {
           {step === 1 ? (
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="space-y-2 text-sm font-semibold text-slate-700 sm:col-span-2">
-                Имя и фамилия
+                {labels.fullName}
                 <div className="relative">
                   <UserRound className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                   <input
@@ -224,7 +323,7 @@ export function BookingWidget({ tour }: BookingWidgetProps) {
                 </div>
               </label>
               <label className="space-y-2 text-sm font-semibold text-slate-700">
-                Телефон
+                {labels.phone}
                 <div className="relative">
                   <Phone className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                   <input
@@ -239,12 +338,12 @@ export function BookingWidget({ tour }: BookingWidgetProps) {
 
           {step === 2 ? (
             <div className="space-y-4">
-              <h4 className="font-heading text-xl font-bold text-dark">Участники</h4>
+              <h4 className="font-heading text-xl font-bold text-dark">{labels.participants}</h4>
               <div className="grid gap-4">
                 {participants.map((participant, index) => (
                   <div key={index} className="grid gap-4 rounded-[1.5rem] border border-slate-200 p-4 sm:grid-cols-[1fr_140px]">
                     <label className="space-y-2 text-sm font-semibold text-slate-700">
-                      Участник {index + 1}
+                      {labels.participant} {index + 1}
                       <input
                         className="w-full rounded-2xl border border-slate-200 px-4 py-3"
                         value={participant.name}
@@ -258,7 +357,7 @@ export function BookingWidget({ tour }: BookingWidgetProps) {
                       />
                     </label>
                     <label className="space-y-2 text-sm font-semibold text-slate-700">
-                      Возраст
+                      {labels.age}
                       <input
                         className="w-full rounded-2xl border border-slate-200 px-4 py-3"
                         value={participant.age}
@@ -279,10 +378,10 @@ export function BookingWidget({ tour }: BookingWidgetProps) {
 
           {step === 3 ? (
             <div className="space-y-4">
-              <h4 className="font-heading text-xl font-bold text-dark">Оплата</h4>
+              <h4 className="font-heading text-xl font-bold text-dark">{labels.payment}</h4>
               <div className="grid gap-4 rounded-[1.5rem] bg-slate-50 p-5">
                 <label className="space-y-2 text-sm font-semibold text-slate-700">
-                  Номер карты
+                  {labels.cardNumber}
                   <div className="relative">
                     <CreditCard className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                     <input className="w-full rounded-2xl border border-slate-200 py-3 pl-11 pr-4" placeholder="4242 4242 4242 4242" />
@@ -290,7 +389,7 @@ export function BookingWidget({ tour }: BookingWidgetProps) {
                 </label>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <label className="space-y-2 text-sm font-semibold text-slate-700">
-                    Срок действия
+                    {labels.expiry}
                     <input className="w-full rounded-2xl border border-slate-200 px-4 py-3" placeholder="12/28" />
                   </label>
                   <label className="space-y-2 text-sm font-semibold text-slate-700">
@@ -300,8 +399,8 @@ export function BookingWidget({ tour }: BookingWidgetProps) {
                 </div>
                 <div className="flex items-center justify-between rounded-[1.5rem] border border-primary/10 bg-white p-4">
                   <div>
-                    <p className="text-sm font-semibold text-slate-600">К оплате</p>
-                    <p className="font-heading text-2xl font-extrabold text-dark">{formatCurrency(total, tour.currency)}</p>
+                    <p className="text-sm font-semibold text-slate-600">{labels.toPay}</p>
+                    <p className="font-heading text-2xl font-extrabold text-dark">{formatCurrencyByLocale(total, tour.currency, locale)}</p>
                   </div>
                   <Wallet className="h-10 w-10 text-primary" />
                 </div>
@@ -312,15 +411,19 @@ export function BookingWidget({ tour }: BookingWidgetProps) {
           {step === 4 ? (
             <div className="rounded-[2rem] bg-gradient-to-br from-primary/10 to-white p-8 text-center">
               <CheckCircle2 className="mx-auto h-14 w-14 text-success" />
-              <h4 className="mt-4 font-heading text-2xl font-extrabold text-dark">Бронирование подтверждено</h4>
+              <h4 className="mt-4 font-heading text-2xl font-extrabold text-dark">{labels.confirmed}</h4>
               <p className="mt-3 text-slate-600">
-                Номер бронирования <span className="font-bold text-dark">{bookingNumber}</span>
+                {labels.bookingNumber} <span className="font-bold text-dark">{bookingNumber}</span>
               </p>
               <p className="mt-2 text-sm text-slate-500">
-                Мы отправили детали поездки на {personal.email}. Тур запланирован на {formatDateRange(date, tour.endDate)}.
+                {locale === 'en'
+                  ? `We sent trip details to ${personal.email}. The tour is scheduled for ${formatDateRangeByLocale(date, tour.endDate, locale)}.`
+                  : locale === 'ky'
+                    ? `${personal.email} дарегине сапардын деталдарын жөнөттүк. Тур ${formatDateRangeByLocale(date, tour.endDate, locale)} күндөрүнө пландалды.`
+                    : `Мы отправили детали поездки на ${personal.email}. Тур запланирован на ${formatDateRangeByLocale(date, tour.endDate, locale)}.`}
               </p>
               <div className="mt-6">
-                <Button onClick={closeModal}>Закрыть</Button>
+                <Button onClick={closeModal}>{labels.close}</Button>
               </div>
             </div>
           ) : null}
@@ -328,9 +431,9 @@ export function BookingWidget({ tour }: BookingWidgetProps) {
           {step < 4 ? (
             <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
               <Button variant="ghost" onClick={() => setStep((current) => (current > 1 ? ((current - 1) as BookingStep) : current))} disabled={step === 1}>
-                Назад
+                {labels.back}
               </Button>
-              <Button onClick={handleNext}>{step === 3 ? 'Подтвердить и оплатить' : 'Далее'}</Button>
+              <Button onClick={handleNext}>{step === 3 ? labels.confirmAndPay : labels.next}</Button>
             </div>
           ) : null}
         </div>

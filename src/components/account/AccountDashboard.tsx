@@ -6,12 +6,15 @@ import { useEffect, useMemo, useState } from 'react';
 import { CalendarDays, LogOut, Mail, Phone, ShieldCheck, Ticket } from 'lucide-react';
 
 import { useAuth } from '@/components/auth/AuthProvider';
+import { useSitePreferences } from '@/components/preferences/SitePreferencesProvider';
 import { buttonStyles } from '@/components/ui/Button';
 import type { BookingRecord } from '@/lib/types';
 import { formatCurrency, formatReadableDate } from '@/lib/utils';
+import { formatCurrencyByLocale, formatReadableDateByLocale } from '@/lib/i18n';
 
 export function AccountDashboard() {
   const { hydrated, logout, openAuth, user } = useAuth();
+  const { locale, t } = useSitePreferences();
   const [bookings, setBookings] = useState<BookingRecord[]>([]);
 
   useEffect(() => {
@@ -33,23 +36,23 @@ export function AccountDashboard() {
   );
 
   if (!hydrated) {
-    return <div className="section-shell">Загружаем аккаунт...</div>;
+    return <div className="section-shell">{t('account.loading')}</div>;
   }
 
   if (!user) {
     return (
       <div className="section-shell">
         <div className="mx-auto max-w-2xl rounded-[2.5rem] border border-slate-200 bg-white p-10 text-center shadow-card">
-          <h1 className="text-4xl font-extrabold">Личный кабинет</h1>
+          <h1 className="text-4xl font-extrabold dark:text-white">{t('account.title')}</h1>
           <p className="mt-4 text-base leading-7 text-slate-600">
-            Войдите через Gmail, чтобы видеть свои бронирования и использовать единый профиль при оформлении туров.
+            {t('account.guestDescription')}
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <button className={buttonStyles({ variant: 'primary', size: 'lg' })} onClick={() => openAuth('login')}>
-              Войти
+              {t('nav.login')}
             </button>
             <button className={buttonStyles({ variant: 'dark', size: 'lg' })} onClick={() => openAuth('register')}>
-              Создать аккаунт
+              {t('account.createAccount')}
             </button>
           </div>
         </div>
@@ -65,7 +68,7 @@ export function AccountDashboard() {
             <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
               <div>
                 <p className="eyebrow">Account</p>
-                <h1 className="mt-4 text-4xl font-extrabold">{user.name}</h1>
+                <h1 className="mt-4 text-4xl font-extrabold dark:text-white">{user.name}</h1>
                 <div className="mt-4 flex flex-wrap gap-4 text-sm text-slate-600">
                   <span className="flex items-center gap-2">
                     <Mail className="h-4 w-4 text-primary" />
@@ -81,13 +84,13 @@ export function AccountDashboard() {
               </div>
               <button className={buttonStyles({ variant: 'ghost', size: 'md' })} onClick={logout}>
                 <LogOut className="h-4 w-4" />
-                Выйти
+                {t('nav.logout')}
               </button>
             </div>
           </div>
 
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold">Мои бронирования</h2>
+            <h2 className="text-2xl font-bold dark:text-white">{t('account.myBookings')}</h2>
             {bookings.length ? (
               bookings.map((booking) => (
                 <article key={booking.id} className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-card">
@@ -97,26 +100,26 @@ export function AccountDashboard() {
                         <Ticket className="h-4 w-4 text-primary" />
                         <span>{booking.id}</span>
                       </div>
-                      <h3 className="mt-2 text-2xl font-bold">{booking.tourTitle}</h3>
+                      <h3 className="mt-2 text-2xl font-bold dark:text-white">{booking.tourTitle}</h3>
                       <div className="mt-3 flex flex-wrap gap-4 text-sm text-slate-600">
                         <span className="flex items-center gap-2">
                           <CalendarDays className="h-4 w-4 text-primary" />
-                          {formatReadableDate(booking.travelDate)}
+                          {formatReadableDateByLocale(booking.travelDate, locale)}
                         </span>
-                        <span>{booking.people} чел</span>
-                        <span>{formatCurrency(booking.total, booking.currency)}</span>
+                        <span>{booking.people}</span>
+                        <span>{formatCurrencyByLocale(booking.total, booking.currency, locale)}</span>
                       </div>
                     </div>
-                    <span className="rounded-full bg-success/10 px-4 py-2 text-sm font-semibold text-success">Подтверждено</span>
+                    <span className="rounded-full bg-success/10 px-4 py-2 text-sm font-semibold text-success">{t('account.confirmed')}</span>
                   </div>
                 </article>
               ))
             ) : (
               <div className="rounded-[2rem] border border-dashed border-slate-300 bg-white px-6 py-12 text-center shadow-card">
-                <p className="text-base text-slate-600">Пока нет подтвержденных бронирований.</p>
+                <p className="text-base text-slate-600">{t('account.noBookings')}</p>
                 <div className="mt-6">
                   <Link href="/tours" className={buttonStyles({ variant: 'primary', size: 'lg' })}>
-                    Выбрать тур
+                    {t('account.chooseTour')}
                   </Link>
                 </div>
               </div>
@@ -126,15 +129,15 @@ export function AccountDashboard() {
 
         <aside className="space-y-4">
           <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-card">
-            <p className="text-sm uppercase tracking-[0.18em] text-slate-400">Статистика</p>
+            <p className="text-sm uppercase tracking-[0.18em] text-slate-400">{t('account.stats')}</p>
             <div className="mt-4 space-y-4">
               <div>
-                <p className="text-sm text-slate-500">Бронирований</p>
+                <p className="text-sm text-slate-500">{t('account.bookings')}</p>
                 <p className="text-3xl font-extrabold text-dark">{stats.bookings}</p>
               </div>
               <div>
-                <p className="text-sm text-slate-500">Общая сумма</p>
-                <p className="text-3xl font-extrabold text-dark">{formatCurrency(stats.total, 'KGS')}</p>
+                <p className="text-sm text-slate-500">{t('account.total')}</p>
+                <p className="text-3xl font-extrabold text-dark">{formatCurrencyByLocale(stats.total, 'KGS', locale)}</p>
               </div>
             </div>
           </div>
@@ -142,10 +145,10 @@ export function AccountDashboard() {
           <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-card">
             <div className="flex items-center gap-3">
               <ShieldCheck className="h-5 w-5 text-success" />
-              <h3 className="text-lg font-bold">Безопасный профиль</h3>
+              <h3 className="text-lg font-bold dark:text-white">{t('account.secure')}</h3>
             </div>
             <p className="mt-3 text-sm leading-6 text-slate-600">
-              Авторизация и история бронирований хранятся локально в браузере как mock-режим без внешнего бэкенда.
+              {t('account.secureDescription')}
             </p>
           </div>
         </aside>

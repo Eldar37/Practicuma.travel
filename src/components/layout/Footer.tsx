@@ -1,43 +1,11 @@
+'use client';
+
 import Link from 'next/link';
 
 import { Facebook, Instagram, Send, Youtube } from 'lucide-react';
 
 import { Logo } from '@/components/layout/Logo';
-
-const footerGroups = [
-  {
-    title: 'Туры',
-    links: [
-      { href: '/tours?category=burning', label: 'Горящие' },
-      { href: '/tours?category=weekend', label: 'Выходные' },
-      { href: '/tours?category=kyrgyzstan', label: 'По Кыргызстану' }
-    ]
-  },
-  {
-    title: 'Контент',
-    links: [
-      { href: '/content', label: 'Видео' },
-      { href: '/content?type=blog', label: 'Блоги' },
-      { href: '/#ai-assistant', label: 'AI-подбор' }
-    ]
-  },
-  {
-    title: 'Компания',
-    links: [
-      { href: '/about', label: 'О платформе' },
-      { href: '/partners', label: 'Партнёрство' },
-      { href: '/partners#guides', label: 'Для гидов' }
-    ]
-  },
-  {
-    title: 'Помощь',
-    links: [
-      { href: '/help#faq', label: 'FAQ' },
-      { href: '/help#payment', label: 'Оплата' },
-      { href: '/help#contacts', label: 'Контакты' }
-    ]
-  }
-];
+import { useSitePreferences } from '@/components/preferences/SitePreferencesProvider';
 
 const socialLinks = [
   {
@@ -63,16 +31,50 @@ const socialLinks = [
 ];
 
 export function Footer() {
+  const { t } = useSitePreferences();
+
+  const footerGroups = [
+    {
+      title: t('footer.tours'),
+      links: [
+        { href: '/tours?category=burning', label: t('footer.hot') },
+        { href: '/tours?category=weekend', label: t('footer.weekend') },
+        { href: '/tours?category=kyrgyzstan', label: t('footer.kyrgyzstan') }
+      ]
+    },
+    {
+      title: t('footer.content'),
+      links: [
+        { href: '/content', label: t('footer.videos') },
+        { href: '/content?type=blog', label: t('footer.blogs') },
+        { href: '/#ai-assistant', label: t('footer.ai') }
+      ]
+    },
+    {
+      title: t('footer.company'),
+      links: [
+        { href: '/about', label: t('footer.aboutPlatform') },
+        { href: '/partners', label: t('footer.partnership') },
+        { href: '/partners#guides', label: t('footer.forGuides') }
+      ]
+    },
+    {
+      title: t('footer.help'),
+      links: [
+        { href: '/help#faq', label: 'FAQ' },
+        { href: '/help#payment', label: t('footer.payment') },
+        { href: '/help#contacts', label: t('footer.contacts') }
+      ]
+    }
+  ];
+
   return (
-    <footer className="relative overflow-hidden bg-dark text-white">
+    <footer className="relative overflow-hidden bg-dark text-white dark:bg-slate-950">
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[1.3fr_repeat(4,1fr)] lg:px-8">
         <div className="space-y-5">
           <Logo colorClassName="text-white" className="max-w-sm" />
-          <p className="max-w-sm text-sm leading-6 text-slate-300">
-            Цифровая travel-платформа Кыргызстана, которая соединяет вдохновение, туры, бронирование и партнёрскую
-            монетизацию в одном продукте.
-          </p>
+          <p className="max-w-sm text-sm leading-6 text-slate-300">{t('footer.description')}</p>
           <div className="flex gap-3">
             {socialLinks.map((item) => {
               const Icon = item.icon;
@@ -95,7 +97,7 @@ export function Footer() {
         </div>
         {footerGroups.map((group) => (
           <div key={group.title}>
-            <h4 className="font-heading text-base font-bold">{group.title}</h4>
+            <h4 className="font-heading text-base font-bold text-white">{group.title}</h4>
             <ul className="mt-5 space-y-3 text-sm text-slate-300">
               {group.links.map((link) => (
                 <li key={link.label}>
@@ -110,8 +112,8 @@ export function Footer() {
       </div>
       <div className="border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-5 text-sm text-slate-400 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
-          <span>© 2024 Practicuma Travel. Все права защищены.</span>
-          <span>Сделано для современной экосистемы туризма Кыргызстана.</span>
+          <span>{t('footer.copyright')}</span>
+          <span>{t('footer.madeFor')}</span>
         </div>
       </div>
     </footer>

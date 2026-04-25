@@ -10,13 +10,13 @@ const variantClasses: Record<ButtonVariant, string> = {
   primary:
     'bg-primary text-white shadow-soft hover:brightness-95 focus-visible:ring-primary/40',
   secondary:
-    'bg-accent text-dark shadow-soft hover:brightness-95 focus-visible:ring-accent/40',
+    'bg-accent text-dark shadow-soft hover:brightness-95 focus-visible:ring-accent/40 dark:text-slate-950',
   outline:
-    'border border-white/70 bg-white/10 text-white backdrop-blur-sm hover:bg-white hover:text-dark focus-visible:ring-white/50',
+    'border border-white/70 bg-white/10 text-white backdrop-blur-sm hover:bg-white hover:text-dark focus-visible:ring-white/50 dark:border-slate-600 dark:bg-slate-900/60 dark:text-white dark:hover:bg-slate-800 dark:hover:text-white',
   ghost:
-    'bg-transparent text-slate-700 hover:bg-slate-100 focus-visible:ring-slate-300',
+    'bg-transparent text-slate-700 hover:bg-slate-100 focus-visible:ring-slate-300 dark:text-slate-100 dark:hover:bg-slate-800',
   dark:
-    'bg-dark text-white shadow-soft hover:brightness-95 focus-visible:ring-slate-500'
+    'bg-dark text-white shadow-soft hover:brightness-95 focus-visible:ring-slate-500 dark:bg-slate-200 dark:text-slate-950'
 };
 
 const sizeClasses: Record<ButtonSize, string> = {

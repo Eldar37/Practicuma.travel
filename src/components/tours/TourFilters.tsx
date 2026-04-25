@@ -2,14 +2,17 @@
 
 import { SlidersHorizontal } from 'lucide-react';
 
+import { useSitePreferences } from '@/components/preferences/SitePreferencesProvider';
 import { Button } from '@/components/ui/Button';
 import type { DurationFilter, Tour, TourFilterState } from '@/lib/types';
 import {
-  difficultyLabels,
-  durationLabels,
-  groupSizeOptions,
-  tourCategoryLabels
 } from '@/lib/utils';
+import {
+  difficultyLabelsByLocale,
+  durationLabelsByLocale,
+  groupSizeOptionsByLocale,
+  tourCategoryLabelsByLocale
+} from '@/lib/i18n';
 
 interface TourFiltersProps {
   filters: TourFilterState;
@@ -36,12 +39,14 @@ export function TourFilters({
   onReset,
   onApply
 }: TourFiltersProps) {
+  const { locale, t } = useSitePreferences();
+
   return (
-    <div className="space-y-6 rounded-[2rem] border border-slate-200 bg-white p-6 shadow-card">
+    <div className="space-y-6 rounded-[2rem] border border-slate-200 bg-white p-6 shadow-card dark:border-slate-800 dark:bg-slate-900">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="font-heading text-xl font-bold">Фильтры</h3>
-          <p className="mt-1 text-sm text-slate-500">Настройте выдачу под поездку</p>
+          <h3 className="font-heading text-xl font-bold dark:text-white">{t('tours.filters')}</h3>
+          <p className="mt-1 text-sm text-slate-500">{t('tours.filterHint')}</p>
         </div>
         <span className="rounded-full bg-slate-100 p-2 text-slate-500">
           <SlidersHorizontal className="h-4 w-4" />
@@ -49,7 +54,7 @@ export function TourFilters({
       </div>
 
       <section className="space-y-3">
-        <h4 className="text-sm font-semibold uppercase tracking-[0.14em] text-slate-400">Категория</h4>
+        <h4 className="text-sm font-semibold uppercase tracking-[0.14em] text-slate-400">{t('tours.category')}</h4>
         <div className="space-y-2">
           {(
             ['burning', 'weekend', 'kyrgyzstan', 'trekking', 'cultural'] as Tour['category'][]
@@ -69,7 +74,7 @@ export function TourFilters({
                     checked={active}
                     onChange={() => onCategoryToggle(category)}
                   />
-                  {tourCategoryLabels[category]}
+                  {tourCategoryLabelsByLocale[locale][category]}
                 </span>
                 <span className="rounded-full bg-white px-2 py-1 text-xs font-semibold text-slate-500">{categoryCounts[category]}</span>
               </label>
@@ -80,8 +85,10 @@ export function TourFilters({
 
       <section className="space-y-3">
         <div className="flex items-center justify-between">
-          <h4 className="text-sm font-semibold uppercase tracking-[0.14em] text-slate-400">Цена</h4>
-          <span className="text-sm font-semibold text-slate-700">до {filters.priceMax.toLocaleString('ru-RU')} сом</span>
+          <h4 className="text-sm font-semibold uppercase tracking-[0.14em] text-slate-400">{t('tours.price')}</h4>
+          <span className="text-sm font-semibold text-slate-700 dark:text-slate-100">
+            {t('tours.upTo')} {filters.priceMax.toLocaleString(locale === 'en' ? 'en-US' : locale === 'ky' ? 'ky-KG' : 'ru-RU')} сом
+          </span>
         </div>
         <input
           type="range"
@@ -91,14 +98,14 @@ export function TourFilters({
           value={filters.priceMax}
           className="w-full accent-primary"
           onChange={(event) => onPriceChange(Number(event.target.value))}
-          aria-label="Максимальная цена"
+          aria-label={t('tours.price')}
         />
       </section>
 
       <section className="space-y-3">
-        <h4 className="text-sm font-semibold uppercase tracking-[0.14em] text-slate-400">Длительность</h4>
+        <h4 className="text-sm font-semibold uppercase tracking-[0.14em] text-slate-400">{t('tours.duration')}</h4>
         <div className="space-y-2">
-          {(Object.keys(durationLabels) as DurationFilter[]).map((duration) => (
+          {(Object.keys(durationLabelsByLocale.ru) as DurationFilter[]).map((duration) => (
             <label key={duration} className="flex items-center gap-3 text-sm text-slate-600">
               <input
                 type="checkbox"
@@ -106,14 +113,14 @@ export function TourFilters({
                 checked={filters.duration.includes(duration)}
                 onChange={() => onDurationToggle(duration)}
               />
-              <span>{durationLabels[duration]}</span>
+              <span>{durationLabelsByLocale[locale][duration]}</span>
             </label>
           ))}
         </div>
       </section>
 
       <section className="space-y-3">
-        <h4 className="text-sm font-semibold uppercase tracking-[0.14em] text-slate-400">Сложность</h4>
+        <h4 className="text-sm font-semibold uppercase tracking-[0.14em] text-slate-400">{t('tours.difficulty')}</h4>
         <div className="grid grid-cols-3 gap-2">
           {(['easy', 'medium', 'hard'] as Tour['difficulty'][]).map((difficulty) => {
             const active = filters.difficulty.includes(difficulty);
@@ -125,7 +132,7 @@ export function TourFilters({
                 }`}
                 onClick={() => onDifficultyToggle(difficulty)}
               >
-                {difficultyLabels[difficulty]}
+                {difficultyLabelsByLocale[locale][difficulty]}
               </button>
             );
           })}
@@ -133,13 +140,13 @@ export function TourFilters({
       </section>
 
       <section className="space-y-3">
-        <h4 className="text-sm font-semibold uppercase tracking-[0.14em] text-slate-400">Размер группы</h4>
+        <h4 className="text-sm font-semibold uppercase tracking-[0.14em] text-slate-400">{t('tours.groupSize')}</h4>
         <select
-          className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700"
+          className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
           value={filters.groupSize}
           onChange={(event) => onGroupSizeChange(event.target.value)}
         >
-          {groupSizeOptions.map((option) => (
+          {groupSizeOptionsByLocale[locale].map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
             </option>
@@ -148,10 +155,10 @@ export function TourFilters({
       </section>
 
       <section className="space-y-3">
-        <h4 className="text-sm font-semibold uppercase tracking-[0.14em] text-slate-400">Рейтинг</h4>
+        <h4 className="text-sm font-semibold uppercase tracking-[0.14em] text-slate-400">{t('tours.rating')}</h4>
         <div className="grid grid-cols-3 gap-2">
           {[
-            { label: 'Любой', value: '' as const },
+            { label: t('tours.any'), value: '' as const },
             { label: '4+', value: '4' as const },
             { label: '4.5+', value: '4.5' as const }
           ].map((item) => (
@@ -170,10 +177,10 @@ export function TourFilters({
 
       <div className="flex flex-col gap-3 pt-2">
         <Button variant="ghost" onClick={onReset}>
-          Сбросить фильтры
+          {t('tours.reset')}
         </Button>
         <Button className="sm:hidden" onClick={onApply}>
-          Применить
+          {t('tours.apply')}
         </Button>
       </div>
     </div>

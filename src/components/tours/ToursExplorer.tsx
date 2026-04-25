@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import { SlidersHorizontal, X } from 'lucide-react';
 
+import { useSitePreferences } from '@/components/preferences/SitePreferencesProvider';
 import { Pagination } from '@/components/shared/Pagination';
 import { SectionHeading } from '@/components/shared/SectionHeading';
 import { TourFilters } from '@/components/tours/TourFilters';
@@ -18,11 +19,11 @@ import {
   getCategoryCounts,
   paginate,
   parseTourSearchParams,
-  sortLabels,
   sortTours,
   filterTours,
   formatReadableDate
 } from '@/lib/utils';
+import { formatReadableDateByLocale, sortLabelsByLocale } from '@/lib/i18n';
 
 interface ToursExplorerProps {
   tours: Tour[];
@@ -80,6 +81,7 @@ export function ToursExplorer({ tours, initialFilters }: ToursExplorerProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const { locale, t } = useSitePreferences();
   const filters = useMemo(
     () => parseTourSearchParams(Object.fromEntries(searchParams.entries())) || initialFilters,
     [initialFilters, searchParams]
@@ -104,9 +106,9 @@ export function ToursExplorer({ tours, initialFilters }: ToursExplorerProps) {
   return (
     <div className="section-shell space-y-10">
       <SectionHeading
-        eyebrow="Каталог"
-        title="Туры по Кыргызстану"
-        description="Гибкая выдача по категориям, бюджету, длительности и сложности. Все фильтры синхронизируются с URL."
+        eyebrow={t('tours.catalog')}
+        title={t('tours.toursTitle')}
+        description={t('tours.toursDescription')}
       />
       <div className="grid gap-8 lg:grid-cols-[320px_minmax(0,1fr)]">
         <aside className="hidden self-start lg:block lg:sticky lg:top-28">
@@ -150,23 +152,23 @@ export function ToursExplorer({ tours, initialFilters }: ToursExplorerProps) {
         <div>
           <div className="mb-6 flex flex-col gap-4 rounded-[2rem] border border-slate-200 bg-white p-5 shadow-card sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-2">
-              <p className="text-sm text-slate-500">Найдено {sortedTours.length} туров</p>
-              <p className="text-sm font-semibold text-slate-700">Сортировка и фильтры сохраняются в URL</p>
+              <p className="text-sm text-slate-500">{t('tours.found')} {sortedTours.length} {t('tours.toursWord')}</p>
+              <p className="text-sm font-semibold text-slate-700 dark:text-slate-100">{t('tours.urlSynced')}</p>
               {(filters.query || filters.date || filters.people) ? (
                 <div className="flex flex-wrap gap-2">
                   {filters.query ? (
                     <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-                      Направление: {filters.query}
+                      {t('tours.destination')}: {filters.query}
                     </span>
                   ) : null}
                   {filters.date ? (
                     <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-                      Дата: {formatReadableDate(filters.date)}
+                      {t('tours.date')}: {formatReadableDateByLocale(filters.date, locale)}
                     </span>
                   ) : null}
                   {filters.people ? (
                     <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-                      Людей: {filters.people}
+                      {t('tours.people')}: {filters.people}
                     </span>
                   ) : null}
                 </div>
@@ -179,10 +181,10 @@ export function ToursExplorer({ tours, initialFilters }: ToursExplorerProps) {
                 iconLeft={<SlidersHorizontal className="h-4 w-4" />}
                 onClick={() => setMobileFiltersOpen(true)}
               >
-                Фильтры
+                {t('tours.filters')}
               </Button>
               <select
-                className="rounded-full border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700"
+                className="rounded-full border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
                 value={filters.sort}
                 onChange={(event) =>
                   updateFilters((current) => ({
@@ -192,7 +194,7 @@ export function ToursExplorer({ tours, initialFilters }: ToursExplorerProps) {
                   }))
                 }
               >
-                {Object.entries(sortLabels).map(([value, label]) => (
+                {Object.entries(sortLabelsByLocale[locale]).map(([value, label]) => (
                   <option key={value} value={value}>
                     {label}
                   </option>

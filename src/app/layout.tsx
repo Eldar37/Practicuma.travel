@@ -5,6 +5,7 @@ import type { ReactNode } from 'react';
 import { AuthProvider } from '@/components/auth/AuthProvider';
 import { Footer } from '@/components/layout/Footer';
 import { Navbar } from '@/components/layout/Navbar';
+import { SitePreferencesProvider } from '@/components/preferences/SitePreferencesProvider';
 
 import './globals.css';
 
@@ -27,13 +28,15 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="ru">
-      <body className={`${headingFont.variable} ${bodyFont.variable} bg-background font-body text-slate-700 antialiased`}>
-        <AuthProvider>
-          <Navbar />
-          <div className="min-h-screen pt-20">{children}</div>
-          <Footer />
-        </AuthProvider>
+    <html lang="ru" suppressHydrationWarning>
+      <body className={`${headingFont.variable} ${bodyFont.variable} bg-background font-body text-slate-700 antialiased transition-colors duration-300 dark:bg-slate-950 dark:text-slate-200`}>
+        <SitePreferencesProvider>
+          <AuthProvider>
+            <Navbar />
+            <div className="min-h-screen pt-20">{children}</div>
+            <Footer />
+          </AuthProvider>
+        </SitePreferencesProvider>
       </body>
     </html>
   );

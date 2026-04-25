@@ -6,11 +6,11 @@ type BadgeVariant = 'primary' | 'accent' | 'success' | 'danger' | 'neutral' | 'd
 
 const variantClasses: Record<BadgeVariant, string> = {
   primary: 'bg-primary/10 text-primary',
-  accent: 'bg-accent/15 text-[#C45F10]',
+  accent: 'bg-accent/15 text-[#C45F10] dark:text-accent',
   success: 'bg-success/10 text-success',
-  danger: 'bg-rose-100 text-rose-700',
-  neutral: 'bg-slate-100 text-slate-600',
-  dark: 'bg-dark text-white'
+  danger: 'bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-200',
+  neutral: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-200',
+  dark: 'bg-dark text-white dark:bg-slate-200 dark:text-slate-950'
 };
 
 interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {

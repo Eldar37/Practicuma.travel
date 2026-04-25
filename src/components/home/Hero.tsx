@@ -1,21 +1,34 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { motion } from 'framer-motion';
 import { ArrowRight, CalendarDays, MapPinned, Search, Users2 } from 'lucide-react';
 
+import { useSitePreferences } from '@/components/preferences/SitePreferencesProvider';
 import { Button, buttonStyles } from '@/components/ui/Button';
 
-const destinations = ['Иссык-Куль', 'Бишкек', 'Нарын', 'Ош', 'Сон-Куль', 'Ала-Арча'];
+const destinationOptions = {
+  ru: ['Иссык-Куль', 'Бишкек', 'Нарын', 'Ош', 'Сон-Куль', 'Ала-Арча'],
+  ky: ['Ысык-Көл', 'Бишкек', 'Нарын', 'Ош', 'Соң-Көл', 'Ала-Арча'],
+  en: ['Issyk-Kul', 'Bishkek', 'Naryn', 'Osh', 'Song-Kul', 'Ala-Archa']
+} as const;
 
 export function Hero() {
   const router = useRouter();
-  const [destination, setDestination] = useState(destinations[0]);
+  const { locale, t } = useSitePreferences();
+  const destinations = useMemo(() => destinationOptions[locale], [locale]);
+  const [destination, setDestination] = useState<string>(destinations[0]);
   const [date, setDate] = useState('2026-06-14');
   const [people, setPeople] = useState(2);
+
+  useEffect(() => {
+    if (!destinations.some((item) => item === destination)) {
+      setDestination(destinations[0]);
+    }
+  }, [destination, destinations]);
 
   return (
     <section className="relative flex min-h-[calc(100vh-5rem)] items-center overflow-hidden">
@@ -35,7 +48,7 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            Цифровая платформа туризма Кыргызстана
+            {t('home.heroBadge')}
           </motion.span>
           <motion.h1
             className="mt-6 max-w-3xl text-5xl font-extrabold tracking-tight text-white sm:text-6xl lg:text-7xl"
@@ -43,7 +56,7 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            Откройте настоящий Кыргызстан
+            {t('home.heroTitle')}
           </motion.h1>
           <motion.p
             className="mt-6 max-w-2xl text-lg leading-8 text-white/80 sm:text-xl"
@@ -51,7 +64,7 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.18 }}
           >
-            От вдохновения до поездки — в одной платформе. Контент, маршруты, AI-подбор и бронирование в одном travel-продукте.
+            {t('home.heroDescription')}
           </motion.p>
           <motion.div
             className="mt-10 flex flex-col gap-4 sm:flex-row"
@@ -60,10 +73,10 @@ export function Hero() {
             transition={{ duration: 0.6, delay: 0.26 }}
           >
             <Link href="/tours" className={buttonStyles({ variant: 'primary', size: 'lg' })}>
-              Найти тур
+              {t('home.findTour')}
             </Link>
             <Link href="/map" className={buttonStyles({ variant: 'outline', size: 'lg' })}>
-              Смотреть на карте
+              {t('home.mapView')}
             </Link>
           </motion.div>
         </div>
@@ -88,14 +101,14 @@ export function Hero() {
           <label className="flex items-center gap-3 rounded-[1.5rem] border border-white/10 bg-white/10 px-4 py-4">
             <MapPinned className="h-5 w-5 text-white/80" />
             <div className="flex-1">
-              <span className="block text-xs uppercase tracking-[0.18em] text-white/50">Направление</span>
+              <span className="block text-xs uppercase tracking-[0.18em] text-white/50">{t('home.destination')}</span>
               <select
                 value={destination}
                 onChange={(event) => setDestination(event.target.value)}
                 className="w-full bg-transparent text-sm font-semibold text-white"
               >
                 {destinations.map((item) => (
-                  <option key={item} className="text-dark">
+                  <option key={item} value={item} className="text-dark">
                     {item}
                   </option>
                 ))}
@@ -105,7 +118,7 @@ export function Hero() {
           <label className="flex items-center gap-3 rounded-[1.5rem] border border-white/10 bg-white/10 px-4 py-4">
             <CalendarDays className="h-5 w-5 text-white/80" />
             <div className="flex-1">
-              <span className="block text-xs uppercase tracking-[0.18em] text-white/50">Даты</span>
+              <span className="block text-xs uppercase tracking-[0.18em] text-white/50">{t('home.dates')}</span>
               <input
                 type="date"
                 value={date}
@@ -117,7 +130,7 @@ export function Hero() {
           <label className="flex items-center gap-3 rounded-[1.5rem] border border-white/10 bg-white/10 px-4 py-4">
             <Users2 className="h-5 w-5 text-white/80" />
             <div className="flex-1">
-              <span className="block text-xs uppercase tracking-[0.18em] text-white/50">Люди</span>
+              <span className="block text-xs uppercase tracking-[0.18em] text-white/50">{t('home.people')}</span>
               <input
                 type="number"
                 min={1}
@@ -129,7 +142,7 @@ export function Hero() {
             </div>
           </label>
           <Button size="lg" iconLeft={<Search className="h-4 w-4" />} iconRight={<ArrowRight className="h-4 w-4" />}>
-            Найти
+            {t('home.search')}
           </Button>
         </motion.form>
 
@@ -139,7 +152,7 @@ export function Hero() {
           transition={{ duration: 2.5, repeat: Infinity }}
         >
           <span className="h-px w-14 bg-white/40" />
-          Листайте, чтобы увидеть экосистему платформы
+          {t('home.scrollHint')}
         </motion.div>
       </div>
     </section>

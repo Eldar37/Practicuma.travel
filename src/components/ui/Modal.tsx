@@ -54,12 +54,17 @@ export function Modal({ open, onClose, title, children, className }: ModalProps)
         aria-label="Закрыть модальное окно"
         onClick={onClose}
       />
-      <div className={cn('relative z-10 w-full max-w-4xl rounded-[2rem] bg-white p-6 shadow-2xl sm:p-8', className)}>
+      <div
+        className={cn(
+          'relative z-10 w-full max-w-4xl rounded-[2rem] bg-white p-6 shadow-2xl transition-colors sm:p-8 dark:bg-slate-900',
+          className
+        )}
+      >
         <div className="mb-6 flex items-start justify-between gap-4">
-          {title ? <h3 className="font-heading text-2xl font-bold text-dark">{title}</h3> : <span />}
+          {title ? <h3 className="font-heading text-2xl font-bold text-dark dark:text-slate-50">{title}</h3> : <span />}
           <button
             aria-label="Закрыть"
-            className="rounded-full border border-slate-200 p-2 text-slate-500 transition hover:border-slate-300 hover:text-slate-900"
+            className="rounded-full border border-slate-200 p-2 text-slate-500 transition hover:border-slate-300 hover:text-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:text-white"
             onClick={onClose}
           >
             <X className="h-5 w-5" />

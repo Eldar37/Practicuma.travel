@@ -1,18 +1,27 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
-const stats = [
-  { label: 'туров', value: 150, suffix: '+' },
-  { label: 'гидов', value: 50, suffix: '+' },
-  { label: 'регионов', value: 12, suffix: '' },
-  { label: 'рейтинг', value: 4.8, suffix: '★' }
-];
+import { useSitePreferences } from '@/components/preferences/SitePreferencesProvider';
 
 export function StatsSection() {
   const ref = useRef<HTMLDivElement | null>(null);
   const [active, setActive] = useState(false);
+  const { locale } = useSitePreferences();
+  const stats = useMemo(
+    () => [
+      { label: locale === 'en' ? 'tours' : locale === 'ky' ? 'турлар' : 'туров', value: 150, suffix: '+' },
+      { label: locale === 'en' ? 'guides' : locale === 'ky' ? 'гиддер' : 'гидов', value: 50, suffix: '+' },
+      { label: locale === 'en' ? 'regions' : locale === 'ky' ? 'аймак' : 'регионов', value: 12, suffix: '' },
+      { label: locale === 'en' ? 'rating' : locale === 'ky' ? 'рейтинг' : 'рейтинг', value: 4.8, suffix: '★' }
+    ],
+    [locale]
+  );
   const [values, setValues] = useState(stats.map(() => 0));
+
+  useEffect(() => {
+    setValues(stats.map(() => 0));
+  }, [stats]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -51,10 +60,10 @@ export function StatsSection() {
 
     frame = window.requestAnimationFrame(tick);
     return () => window.cancelAnimationFrame(frame);
-  }, [active]);
+  }, [active, stats]);
 
   return (
-    <section className="bg-dark text-white" ref={ref}>
+    <section className="bg-dark text-white dark:bg-slate-950" ref={ref}>
       <div className="container-shell grid gap-8 py-8 sm:grid-cols-2 xl:grid-cols-4">
         {stats.map((stat, index) => (
           <div key={stat.label} className="rounded-[1.5rem] border border-white/10 bg-white/5 p-6 text-center backdrop-blur-sm">

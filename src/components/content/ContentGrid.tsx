@@ -5,23 +5,25 @@ import { useMemo, useState } from 'react';
 import { Search } from 'lucide-react';
 
 import { ContentCard } from '@/components/content/ContentCard';
+import { useSitePreferences } from '@/components/preferences/SitePreferencesProvider';
 import type { ContentItem } from '@/lib/types';
 import { tours } from '@/lib/data';
 import { getTourById } from '@/lib/utils';
+import { contentTypeLabelsByLocale } from '@/lib/i18n';
 
 interface ContentGridProps {
   items: ContentItem[];
   initialType?: 'all' | ContentItem['type'];
 }
 
-const tabs = [
-  { value: 'all', label: 'Все' },
-  { value: 'video', label: 'Видео' },
-  { value: 'blog', label: 'Блоги' },
-  { value: 'ai-route', label: 'AI-маршруты' }
-] as const;
-
 export function ContentGrid({ items, initialType = 'all' }: ContentGridProps) {
+  const { locale, t } = useSitePreferences();
+  const tabs = [
+    { value: 'all', label: contentTypeLabelsByLocale[locale].all },
+    { value: 'video', label: contentTypeLabelsByLocale[locale].video },
+    { value: 'blog', label: contentTypeLabelsByLocale[locale].blog },
+    { value: 'ai-route', label: contentTypeLabelsByLocale[locale]['ai-route'] }
+  ] as const;
   const [type, setType] = useState<typeof tabs[number]['value']>(initialType);
   const [search, setSearch] = useState('');
 
@@ -40,9 +42,9 @@ export function ContentGrid({ items, initialType = 'all' }: ContentGridProps) {
     <div className="section-shell space-y-10">
       <section className="overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-dark via-slate-900 to-primary px-6 py-14 text-white shadow-2xl sm:px-10">
         <span className="eyebrow bg-white/10 text-white">Content Hub</span>
-        <h1 className="mt-5 max-w-3xl text-4xl font-extrabold tracking-tight text-white sm:text-5xl">Вдохновение для поездки</h1>
+        <h1 className="mt-5 max-w-3xl text-4xl font-extrabold tracking-tight text-white sm:text-5xl">{t('contentPage.title')}</h1>
         <p className="mt-4 max-w-2xl text-base leading-7 text-white/75">
-          Видео, блоги и AI-маршруты для тех, кто планирует Кыргызстан через идеи, сценарии и истории.
+          {t('contentPage.description')}
         </p>
         <div className="mt-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <label className="relative block w-full max-w-xl">
@@ -50,7 +52,7 @@ export function ContentGrid({ items, initialType = 'all' }: ContentGridProps) {
             <input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Поиск по видео, блогам и маршрутам"
+              placeholder={t('contentPage.search')}
               className="w-full rounded-full border border-white/15 bg-white/10 py-4 pl-11 pr-4 text-sm text-white placeholder:text-white/55 backdrop-blur-sm"
             />
           </label>
@@ -73,8 +75,8 @@ export function ContentGrid({ items, initialType = 'all' }: ContentGridProps) {
       <section>
         <div className="mb-6 flex items-center justify-between gap-4">
           <div>
-            <p className="text-sm text-slate-500">Найдено {filteredItems.length} материалов</p>
-            <p className="text-sm font-semibold text-slate-700">Микс видео, редакционных блогов и AI-подборок</p>
+            <p className="text-sm text-slate-500">{t('contentPage.found')} {filteredItems.length}</p>
+            <p className="text-sm font-semibold text-slate-700 dark:text-slate-100">{t('contentPage.mixed')}</p>
           </div>
         </div>
         <div className="masonry-grid columns-1 md:columns-2 xl:columns-3">

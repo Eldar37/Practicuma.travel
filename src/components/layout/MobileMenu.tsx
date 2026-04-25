@@ -9,6 +9,8 @@ import { X } from 'lucide-react';
 
 import { useAuth } from '@/components/auth/AuthProvider';
 import { Logo } from '@/components/layout/Logo';
+import { PreferenceControls } from '@/components/layout/PreferenceControls';
+import { useSitePreferences } from '@/components/preferences/SitePreferencesProvider';
 import { Button, buttonStyles } from '@/components/ui/Button';
 import { PARTNER_TELEGRAM_URL } from '@/lib/contacts';
 import { cn } from '@/lib/utils';
@@ -22,13 +24,14 @@ interface MobileMenuProps {
 export function MobileMenu({ open, setOpen, links }: MobileMenuProps) {
   const pathname = usePathname();
   const { hydrated, logout, openAuth, user } = useAuth();
+  const { t } = useSitePreferences();
 
   return (
     <AnimatePresence>
       {open ? (
         <>
           <motion.button
-            aria-label="Закрыть мобильное меню"
+            aria-label={t('nav.menu')}
             className="fixed inset-0 z-40 bg-slate-950/45 backdrop-blur-sm lg:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -36,7 +39,7 @@ export function MobileMenu({ open, setOpen, links }: MobileMenuProps) {
             onClick={() => setOpen(false)}
           />
           <motion.aside
-            className="fixed right-0 top-0 z-50 flex h-full w-full max-w-sm flex-col bg-white p-6 shadow-2xl lg:hidden"
+            className="fixed right-0 top-0 z-50 flex h-full w-full max-w-sm flex-col bg-white p-6 shadow-2xl transition-colors lg:hidden dark:bg-slate-950"
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
@@ -60,7 +63,7 @@ export function MobileMenu({ open, setOpen, links }: MobileMenuProps) {
                     key={link.href}
                     href={link.href}
                     className={cn(
-                      'rounded-2xl px-4 py-3 text-base font-semibold text-slate-700 transition hover:bg-slate-100',
+                      'rounded-2xl px-4 py-3 text-base font-semibold text-slate-700 transition hover:bg-slate-100 dark:text-slate-100 dark:hover:bg-slate-800',
                       isActive && 'bg-primary/10 text-primary'
                     )}
                     onClick={() => setOpen(false)}
@@ -71,6 +74,7 @@ export function MobileMenu({ open, setOpen, links }: MobileMenuProps) {
               })}
             </nav>
             <div className="space-y-3">
+              <PreferenceControls compact />
               {hydrated && user ? (
                 <>
                   <Link href="/account" className={buttonStyles({ variant: 'ghost', size: 'lg', fullWidth: true })} onClick={() => setOpen(false)}>
@@ -84,7 +88,7 @@ export function MobileMenu({ open, setOpen, links }: MobileMenuProps) {
                       setOpen(false);
                     }}
                   >
-                    Выйти
+                    {t('nav.logout')}
                   </Button>
                 </>
               ) : (
@@ -96,7 +100,7 @@ export function MobileMenu({ open, setOpen, links }: MobileMenuProps) {
                       openAuth('login');
                     }}
                   >
-                    Войти
+                    {t('nav.login')}
                   </button>
                   <a
                     href={PARTNER_TELEGRAM_URL}
@@ -105,7 +109,7 @@ export function MobileMenu({ open, setOpen, links }: MobileMenuProps) {
                     className={buttonStyles({ variant: 'primary', size: 'lg', fullWidth: true })}
                     onClick={() => setOpen(false)}
                   >
-                    Стать партнёром
+                    {t('nav.partner')}
                   </a>
                 </>
               )}

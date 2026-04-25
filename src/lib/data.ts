@@ -61,7 +61,295 @@ const imageSet = (seed: string) => [
   `https://picsum.photos/seed/${seed}-5/1200/800`
 ];
 
-export const tours: Tour[] = [
+const createImportedDayTrip = ({
+  id,
+  title,
+  slug,
+  category,
+  description,
+  shortDescription,
+  price,
+  difficulty,
+  location,
+  coordinates,
+  seed,
+  highlights,
+  guide,
+  rating,
+  reviewCount,
+  tags,
+  activities,
+  isHot = false
+}: {
+  id: string;
+  title: string;
+  slug: string;
+  category: Tour['category'];
+  description: string;
+  shortDescription: string;
+  price: number;
+  difficulty: Tour['difficulty'];
+  location: string;
+  coordinates: { lat: number; lng: number };
+  seed: string;
+  highlights: string[];
+  guide: Guide;
+  rating: number;
+  reviewCount: number;
+  tags: string[];
+  activities: string[];
+  isHot?: boolean;
+}): Tour => ({
+  id,
+  title,
+  slug,
+  category,
+  description,
+  shortDescription,
+  price,
+  currency: 'KGS',
+  duration: '1 день',
+  difficulty,
+  groupSize: difficulty === 'hard' ? { min: 4, max: 8 } : difficulty === 'medium' ? { min: 4, max: 12 } : { min: 4, max: 16 },
+  startDate: '2026-04-26',
+  endDate: '2026-04-26',
+  location,
+  coordinates,
+  images: imageSet(seed),
+  highlights,
+  includes: ['Трансфер по маршруту', 'Сопровождение гида', 'Оргсбор и координация', 'Фото-стопы по программе'],
+  excludes: ['Личные расходы', 'Полноценное питание', 'Личная страховка'],
+  itinerary: [
+    {
+      day: 1,
+      title: 'Маршрут дня',
+      description,
+      activities
+    }
+  ],
+  guide,
+  rating,
+  reviewCount,
+  isHot,
+  tags
+});
+
+// Дополнительные туры собраны по live-листингу Practicuma Travel от 26 апреля 2026
+// и нормализованы под внутреннюю структуру платформы.
+const importedPracticumaTours: Tour[] = [
+  createImportedDayTrip({
+    id: 'tour-beshalchaluu-zelenkova',
+    title: 'Два пика за один день: Бешалчалууташ и Зелёнковой',
+    slug: 'dva-pika-beshalchaluu-zelenkovoy',
+    category: 'trekking',
+    description:
+      'Интенсивный однодневный траверс двух вершин для опытных любителей горных выходов. Маршрут рассчитан на ранний старт, быстрый темп и длинный ходовой день.',
+    shortDescription:
+      'Сложный однодневный трек с траверсом двух пиков, панорамами и насыщенным набором высоты.',
+    price: 1100,
+    difficulty: 'hard',
+    location: 'Ала-Арча, пики Бешалчалууташ и Зелёнковой',
+    coordinates: { lat: 42.57, lng: 74.5 },
+    seed: 'beshalchaluu-zelenkova',
+    highlights: ['Траверс двух вершин', 'Панорамные точки над Ала-Арчой', 'Тренировочный формат для сильной группы'],
+    guide: guides[1],
+    rating: 4.8,
+    reviewCount: 66,
+    tags: ['треккинг', 'пики', 'ала-арча', 'сложный'],
+    activities: ['Ранний выезд', 'Подъём на первую вершину', 'Траверс', 'Спуск в долину']
+  }),
+  createImportedDayTrip({
+    id: 'tour-kok-moynok-lake',
+    title: 'Поход к озеру Кок-Мойнок',
+    slug: 'pohod-k-ozeru-kok-moynok',
+    category: 'weekend',
+    description:
+      'Маршрут к озеру Кок-Мойнок проходит через живописное ущелье с умеренной нагрузкой и хорошо подходит тем, кто хочет увидеть малоизвестную природную точку за один день.',
+    shortDescription:
+      'Однодневный поход к озеру Кок-Мойнок с горными тропами, смотровыми точками и камерным форматом.',
+    price: 1100,
+    difficulty: 'medium',
+    location: 'Ущелье Кок-Мойнок',
+    coordinates: { lat: 42.79, lng: 75.2 },
+    seed: 'kok-moynok-lake',
+    highlights: ['Озеро в горной долине', 'Поход одним днём', 'Небольшая группа'],
+    guide: guides[2],
+    rating: 4.7,
+    reviewCount: 30,
+    tags: ['озеро', 'кок-мойнок', 'поход', 'один день'],
+    activities: ['Выезд из Бишкека', 'Пеший маршрут', 'Озеро Кок-Мойнок', 'Возвращение']
+  }),
+  createImportedDayTrip({
+    id: 'tour-racek-knowledge-lake',
+    title: 'Поход на хижину Рацека + озеро Знаний',
+    slug: 'pohod-raceka-ozero-znaniy',
+    category: 'trekking',
+    description:
+      'Классический горный маршрут в Ала-Арче с подъёмом к хижине Рацека и дополнительным выходом к озеру Знаний. Хороший вариант для тех, кто хочет насыщенный день в высокогорье.',
+    shortDescription:
+      'Активный однодневный трек к хижине Рацека и озеру Знаний с высотными видами и горным рельефом.',
+    price: 1100,
+    difficulty: 'hard',
+    location: 'Ала-Арча, хижина Рацека',
+    coordinates: { lat: 42.49, lng: 74.5 },
+    seed: 'racek-knowledge-lake',
+    highlights: ['Хижина Рацека', 'Озеро Знаний', 'Высокогорный однодневный трек'],
+    guide: guides[1],
+    rating: 4.8,
+    reviewCount: 42,
+    tags: ['ала-арча', 'рацека', 'озеро', 'сложный'],
+    activities: ['Сбор группы', 'Подъём к Рацека', 'Выход к озеру', 'Спуск']
+  }),
+  createImportedDayTrip({
+    id: 'tour-barskoon-skazka-south-shore',
+    title: 'Тур по южному берегу Иссык-Куля: Барскоон и каньон Сказка',
+    slug: 'tur-yuzhnyy-bereg-issyk-kul-barskoon-skazka',
+    category: 'weekend',
+    description:
+      'Лёгкий и насыщенный однодневный маршрут по южному берегу Иссык-Куля с двумя самыми популярными природными точками: ущельем Барскоон и каньоном Сказка.',
+    shortDescription:
+      'Южный берег Иссык-Куля за один день: Барскоон, каньон Сказка и панорамные остановки у озера.',
+    price: 1990,
+    difficulty: 'easy',
+    location: 'Южный берег Иссык-Куля, Барскоон, Сказка',
+    coordinates: { lat: 42.18, lng: 77.58 },
+    seed: 'barskoon-skazka-south-shore',
+    highlights: ['Южный берег Иссык-Куля', 'Ущелье Барскоон', 'Каньон Сказка'],
+    guide: guides[2],
+    rating: 4.8,
+    reviewCount: 105,
+    tags: ['исссык-куль', 'барскоон', 'сказка', 'легкий'],
+    activities: ['Ранний выезд', 'Барскоон', 'Каньон Сказка', 'Берег озера']
+  }),
+  createImportedDayTrip({
+    id: 'tour-racek-glacier-teacher-lake',
+    title: 'Тур на Хижину Рацека, ледник и озеро Учитель',
+    slug: 'tur-raceka-lednik-ozero-uchitel',
+    category: 'trekking',
+    description:
+      'Сложный спортивный маршрут в Ала-Арче: хижина Рацека, видовые точки на ледник и выход к озеру Учитель в рамках одного насыщенного дня.',
+    shortDescription:
+      'Сложный однодневный трек к хижине Рацека, леднику и озеру Учитель для подготовленной группы.',
+    price: 1390,
+    difficulty: 'hard',
+    location: 'Ала-Арча, ледник Рацека и озеро Учитель',
+    coordinates: { lat: 42.49, lng: 74.51 },
+    seed: 'racek-glacier-teacher',
+    highlights: ['Ледник Рацека', 'Озеро Учитель', 'Высотный спортивный формат'],
+    guide: guides[1],
+    rating: 4.8,
+    reviewCount: 60,
+    tags: ['ледник', 'ала-арча', 'озеро учитель', 'сложный'],
+    activities: ['Подъём к Рацека', 'Подход к леднику', 'Озеро Учитель', 'Возвращение']
+  }),
+  createImportedDayTrip({
+    id: 'tour-kol-tor-day',
+    title: 'Однодневный тур в Кол-Тор',
+    slug: 'odnodnevnyy-tur-kol-tor',
+    category: 'weekend',
+    description:
+      'Популярный весенне-летний выезд к озеру Кол-Тор с пешим маршрутом через ущелье и акцентом на один красивый природный объект в доступном однодневном формате.',
+    shortDescription:
+      'Поездка к озеру Кол-Тор одним днём: тропа через ущелье, бирюзовая вода и активный отдых рядом с Бишкеком.',
+    price: 1300,
+    difficulty: 'medium',
+    location: 'Озеро Кол-Тор',
+    coordinates: { lat: 42.76, lng: 75.17 },
+    seed: 'kol-tor-day',
+    highlights: ['Озеро Кол-Тор', 'Бирюзовая вода', 'Популярный однодневный формат'],
+    guide: guides[0],
+    rating: 4.7,
+    reviewCount: 33,
+    tags: ['кол-тор', 'озеро', 'поход', 'один день'],
+    activities: ['Выезд', 'Трек к озеру', 'Фото-стопы', 'Возвращение']
+  }),
+  createImportedDayTrip({
+    id: 'tour-aksai-canyons-south-issyk-kul',
+    title: 'Тур на каньоны Ак-Сай и южный берег Иссык-Куля',
+    slug: 'tur-kanony-aksay-yuzhnyy-bereg-issyk-kul',
+    category: 'weekend',
+    description:
+      'Лёгкая поездка для тех, кто хочет соединить необычный рельеф каньонов Ак-Сай с дорогой вдоль южного берега Иссык-Куля без тяжёлого треккинга.',
+    shortDescription:
+      'Лёгкий однодневный маршрут: каньоны Ак-Сай, южный берег Иссык-Куля и комфортный формат без перегруза.',
+    price: 1790,
+    difficulty: 'easy',
+    location: 'Ак-Сай, южный берег Иссык-Куля',
+    coordinates: { lat: 42.23, lng: 77.7 },
+    seed: 'aksai-canyons-south-issyk',
+    highlights: ['Каньоны Ак-Сай', 'Пейзажи южного берега', 'Лёгкий маршрут'],
+    guide: guides[2],
+    rating: 4.7,
+    reviewCount: 84,
+    tags: ['ак-сай', 'каньоны', 'иссык-куль', 'легкий'],
+    activities: ['Дорога вдоль озера', 'Каньоны Ак-Сай', 'Прогулка', 'Возвращение']
+  }),
+  createImportedDayTrip({
+    id: 'tour-kok-moynok-ship-hot-springs',
+    title: 'Комбо-тур: теплоход, каньоны Кок-Мойнок и горячие источники',
+    slug: 'kombo-tur-teplohod-kok-moynok-goryachie-istochniki',
+    category: 'weekend',
+    description:
+      'Комбинированный маршрут с несколькими впечатлениями за один день: прогулка на теплоходе, каньоны Кок-Мойнок, горячие источники и отдых на Иссык-Куле.',
+    shortDescription:
+      'Насыщенный комбо-тур на Иссык-Куль: теплоход, каньоны Кок-Мойнок, источники и отдых на берегу.',
+    price: 2390,
+    difficulty: 'easy',
+    location: 'Иссык-Куль, Кок-Мойнок, горячие источники',
+    coordinates: { lat: 42.67, lng: 76.94 },
+    seed: 'kok-moynok-ship-hot-springs',
+    highlights: ['Теплоход на Иссык-Куле', 'Каньоны Кок-Мойнок', 'Горячие источники'],
+    guide: guides[0],
+    rating: 4.8,
+    reviewCount: 66,
+    tags: ['комбо', 'иссык-куль', 'источники', 'кок-мойнок'],
+    activities: ['Теплоход', 'Каньоны', 'Горячие источники', 'Берег озера']
+  }),
+  createImportedDayTrip({
+    id: 'tour-kok-moynok-hot-springs-combo',
+    title: 'Однодневный комбо-тур: Көк-Мойнок, Иссык-Куль и горячие источники',
+    slug: 'odnodnevnyy-kombo-tur-kok-moynok-issyk-kul-istochniki',
+    category: 'weekend',
+    description:
+      'Ещё один комбинированный маршрут с акцентом на каньоны Көк-Мойнок, короткий отдых у Иссык-Куля и расслабляющее завершение в горячих источниках.',
+    shortDescription:
+      'Однодневный комбо-формат по Иссык-Кулю: каньоны Көк-Мойнок, озеро и горячие источники.',
+    price: 2300,
+    difficulty: 'easy',
+    location: 'Көк-Мойнок, Иссык-Куль',
+    coordinates: { lat: 42.69, lng: 76.96 },
+    seed: 'kok-moynok-hot-springs-combo',
+    highlights: ['Көк-Мойнок', 'Иссык-Куль', 'Отдых в горячих источниках'],
+    guide: guides[0],
+    rating: 4.7,
+    reviewCount: 33,
+    tags: ['көк-мойнок', 'комбо', 'иссык-куль', 'источники'],
+    activities: ['Выезд', 'Каньоны', 'Берег озера', 'Горячие источники']
+  }),
+  createImportedDayTrip({
+    id: 'tour-kol-tor-medium',
+    title: 'Тур на озеро Кол-Тор',
+    slug: 'tur-na-ozero-kol-tor-medium',
+    category: 'trekking',
+    description:
+      'Средний по сложности вариант маршрута к Кол-Тору для тех, кто хочет полноценный ходовой день с набором высоты, но без экстремального формата.',
+    shortDescription:
+      'Средний по сложности поход к озеру Кол-Тор с длинной горной тропой и мощным финальным видом на озеро.',
+    price: 1290,
+    difficulty: 'medium',
+    location: 'Озеро Кол-Тор, ущелье Кегеты',
+    coordinates: { lat: 42.75, lng: 75.16 },
+    seed: 'kol-tor-medium',
+    highlights: ['Средняя сложность', 'Тропа через ущелье', 'Финал у озера Кол-Тор'],
+    guide: guides[1],
+    rating: 4.8,
+    reviewCount: 51,
+    tags: ['кол-тор', 'средний', 'трек', 'кегеты'],
+    activities: ['Ранний выезд', 'Трек по ущелью', 'Озеро Кол-Тор', 'Спуск']
+  })
+];
+
+const coreTours: Tour[] = [
   {
     id: 'tour-issyk-hot-weekend',
     title: 'Горящий тур: Иссык-Куль за выходные',
@@ -645,6 +933,8 @@ export const tours: Tour[] = [
     tags: ['нарын', 'таш-рабат', 'история']
   }
 ];
+
+export const tours: Tour[] = [...coreTours, ...importedPracticumaTours];
 
 export const mapPoints: MapPointRecord[] = [
   {

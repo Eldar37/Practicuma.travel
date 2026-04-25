@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import type { ReactNode } from 'react';
 
 import { AuthModal } from '@/components/auth/AuthModal';
+import { emailDomainAllowed, getMessage, localeStorageKey } from '@/lib/i18n';
 import type { AuthStoredUser, AuthUser } from '@/lib/types';
 
 type AuthMode = 'login' | 'register';
@@ -23,7 +24,14 @@ const CURRENT_KEY = 'practicuma-auth-current';
 
 const normalizeEmail = (email: string) => email.trim().toLowerCase();
 
-const isGmailAddress = (email: string) => /^[a-z0-9._%+-]+@gmail\.com$/i.test(normalizeEmail(email));
+const getCurrentLocale = () => {
+  if (typeof window === 'undefined') {
+    return 'ru' as const;
+  }
+
+  const storedLocale = window.localStorage.getItem(localeStorageKey);
+  return storedLocale === 'ky' || storedLocale === 'en' ? storedLocale : 'ru';
+};
 
 const buildDisplayName = (email: string) => {
   const [localPart] = normalizeEmail(email).split('@');
@@ -108,14 +116,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!normalizedEmail || !password.trim()) {
         return {
           ok: false,
-          error: 'Введите Gmail и пароль.'
+          error: getMessage(getCurrentLocale(), 'auth.missingCredentials')
         };
       }
 
-      if (!isGmailAddress(normalizedEmail)) {
+      if (!emailDomainAllowed(normalizedEmail)) {
         return {
           ok: false,
-          error: 'Вход доступен только через Gmail-аккаунт.'
+          error: getMessage(getCurrentLocale(), 'auth.unsupportedDomain')
         };
       }
 
@@ -126,7 +134,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!foundUser) {
         return {
           ok: false,
-          error: 'Аккаунт не найден или пароль введен неверно.'
+          error: getMessage(getCurrentLocale(), 'auth.invalidCredentials')
         };
       }
 
@@ -143,22 +151,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const normalizedEmail = normalizeEmail(email);
 
       if (!normalizedEmail || !password.trim()) {
-        return { ok: false, error: 'Введите Gmail и пароль.' };
+        return { ok: false, error: getMessage(getCurrentLocale(), 'auth.missingCredentials') };
       }
 
-      if (!isGmailAddress(normalizedEmail)) {
-        return { ok: false, error: 'Для регистрации используйте адрес вида name@gmail.com.' };
+      if (!emailDomainAllowed(normalizedEmail)) {
+        return { ok: false, error: getMessage(getCurrentLocale(), 'auth.registerDomain') };
       }
 
       if (password.trim().length < 6) {
-        return { ok: false, error: 'Пароль должен содержать минимум 6 символов.' };
+        return { ok: false, error: getMessage(getCurrentLocale(), 'auth.shortPassword') };
       }
 
       const users = readUsers();
       const exists = users.some((entry) => normalizeEmail(entry.email) === normalizedEmail);
 
       if (exists) {
-        return { ok: false, error: 'Пользователь с таким Gmail уже существует.' };
+        return { ok: false, error: getMessage(getCurrentLocale(), 'auth.duplicateUser') };
       }
 
       const nextUser: AuthStoredUser = {
