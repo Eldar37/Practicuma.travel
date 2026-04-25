@@ -129,3 +129,43 @@ export interface BookingRecord {
   userEmail: string;
   status: 'confirmed';
 }
+
+export interface AIRecommendationRequest {
+  prompt: string;
+  budget?: number | null;
+  days?: number | null;
+  people?: number | null;
+  difficulty?: Tour['difficulty'] | '';
+  category?: Tour['category'] | '';
+}
+
+export interface ResolvedAIPreferences {
+  prompt: string;
+  budget: number | null;
+  days: number | null;
+  people: number | null;
+  difficulty: Tour['difficulty'] | null;
+  category: Tour['category'] | null;
+  keywords: string[];
+}
+
+export interface AIRecommendation {
+  tourId: string;
+  slug: string;
+  title: string;
+  price: number;
+  currency: Tour['currency'];
+  duration: string;
+  location: string;
+  image: string;
+  shortDescription: string;
+  reason: string;
+  score: number;
+}
+
+export interface AIRecommendationResponse {
+  summary: string;
+  recommendations: AIRecommendation[];
+  preferences: ResolvedAIPreferences;
+  source: 'hf' | 'fallback';
+}

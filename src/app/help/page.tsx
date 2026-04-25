@@ -1,9 +1,13 @@
-import Link from 'next/link';
-
 import { MessageCircle, ShieldCheck, Wallet } from 'lucide-react';
 
 import { SectionHeading } from '@/components/shared/SectionHeading';
 import { buttonStyles } from '@/components/ui/Button';
+import {
+  PARTNER_PHONE_DISPLAY,
+  PARTNER_PHONE_HREF,
+  PARTNER_TELEGRAM_HANDLE,
+  PARTNER_TELEGRAM_URL
+} from '@/lib/contacts';
 
 export default function HelpPage() {
   return (
@@ -20,7 +24,7 @@ export default function HelpPage() {
           {[
             ['Как работает бронирование?', 'В текущей версии бронирование и оплата работают как полноценный UI-flow без внешнего платежного шлюза.'],
             ['Нужен ли аккаунт?', 'Да, для подтверждения бронирования теперь нужна локальная авторизация в браузере.'],
-            ['Можно ли стать гидом или партнёром?', 'Да, кнопка “Стать партнёром” ведет на рабочую форму заявки.']
+            ['Можно ли стать гидом или партнёром?', `Да, кнопка “Стать партнёром” ведет напрямую в Telegram ${PARTNER_TELEGRAM_HANDLE}.`]
           ].map(([title, text]) => (
             <div key={title} className="rounded-[1.5rem] bg-background px-5 py-4">
               <h3 className="text-lg font-bold">{title}</h3>
@@ -53,14 +57,19 @@ export default function HelpPage() {
           <a className="rounded-[1.5rem] bg-background px-5 py-4 text-sm font-semibold text-slate-700" href="mailto:hello@practicuma.travel">
             hello@practicuma.travel
           </a>
-          <a className="rounded-[1.5rem] bg-background px-5 py-4 text-sm font-semibold text-slate-700" href="tel:+996880188881">
-            +996 (880) 18-88-81
+          <a className="rounded-[1.5rem] bg-background px-5 py-4 text-sm font-semibold text-slate-700" href={PARTNER_PHONE_HREF}>
+            {PARTNER_PHONE_DISPLAY}
           </a>
         </div>
         <div className="mt-6 flex flex-wrap gap-4">
-          <Link href="/partners" className={buttonStyles({ variant: 'primary', size: 'lg' })}>
+          <a
+            href={PARTNER_TELEGRAM_URL}
+            target="_blank"
+            rel="noreferrer"
+            className={buttonStyles({ variant: 'primary', size: 'lg' })}
+          >
             Стать партнёром
-          </Link>
+          </a>
           <a href="mailto:hello@practicuma.travel" className={buttonStyles({ variant: 'dark', size: 'lg' })}>
             Написать нам
           </a>

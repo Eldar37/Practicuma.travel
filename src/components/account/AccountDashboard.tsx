@@ -42,7 +42,7 @@ export function AccountDashboard() {
         <div className="mx-auto max-w-2xl rounded-[2.5rem] border border-slate-200 bg-white p-10 text-center shadow-card">
           <h1 className="text-4xl font-extrabold">Личный кабинет</h1>
           <p className="mt-4 text-base leading-7 text-slate-600">
-            Войдите в аккаунт, чтобы видеть свои бронирования и использовать единый профиль при оформлении туров.
+            Войдите через Gmail, чтобы видеть свои бронирования и использовать единый профиль при оформлении туров.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <button className={buttonStyles({ variant: 'primary', size: 'lg' })} onClick={() => openAuth('login')}>

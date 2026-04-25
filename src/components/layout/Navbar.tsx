@@ -11,6 +11,7 @@ import { useAuth } from '@/components/auth/AuthProvider';
 import { Logo } from '@/components/layout/Logo';
 import { MobileMenu } from '@/components/layout/MobileMenu';
 import { Button, buttonStyles } from '@/components/ui/Button';
+import { PARTNER_TELEGRAM_URL } from '@/lib/contacts';
 import { cn } from '@/lib/utils';
 
 const links = [
@@ -98,9 +99,14 @@ export function Navbar() {
                 >
                   Войти
                 </button>
-                <Link href="/partners" className={buttonStyles({ variant: isHomeTop ? 'secondary' : 'primary', size: 'md' })}>
+                <a
+                  href={PARTNER_TELEGRAM_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={buttonStyles({ variant: isHomeTop ? 'secondary' : 'primary', size: 'md' })}
+                >
                   Стать партнёром
-                </Link>
+                </a>
               </>
             )}
           </div>

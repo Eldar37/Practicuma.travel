@@ -21,6 +21,22 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 const USERS_KEY = 'practicuma-auth-users';
 const CURRENT_KEY = 'practicuma-auth-current';
 
+const normalizeEmail = (email: string) => email.trim().toLowerCase();
+
+const isGmailAddress = (email: string) => /^[a-z0-9._%+-]+@gmail\.com$/i.test(normalizeEmail(email));
+
+const buildDisplayName = (email: string) => {
+  const [localPart] = normalizeEmail(email).split('@');
+
+  return (
+    localPart
+      ?.split(/[._-]+/)
+      .filter(Boolean)
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(' ') || 'Traveler'
+  );
+};
+
 const readUsers = () => {
   if (typeof window === 'undefined') {
     return [] as AuthStoredUser[];
@@ -87,14 +103,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = useCallback(
     ({ email, password }: { email: string; password: string }) => {
+      const normalizedEmail = normalizeEmail(email);
+
+      if (!normalizedEmail || !password.trim()) {
+        return {
+          ok: false,
+          error: 'Введите Gmail и пароль.'
+        };
+      }
+
+      if (!isGmailAddress(normalizedEmail)) {
+        return {
+          ok: false,
+          error: 'Вход доступен только через Gmail-аккаунт.'
+        };
+      }
+
       const foundUser = readUsers().find(
-        (entry) => entry.email.toLowerCase() === email.toLowerCase().trim() && entry.password === password
+        (entry) => normalizeEmail(entry.email) === normalizedEmail && entry.password === password
       );
 
       if (!foundUser) {
         return {
           ok: false,
-          error: 'Пользователь не найден или пароль неверный.'
+          error: 'Аккаунт не найден или пароль введен неверно.'
         };
       }
 
@@ -107,33 +139,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   const register = useCallback(
-    ({
-      name,
-      email,
-      phone,
-      password
-    }: {
-      name: string;
-      email: string;
-      phone: string;
-      password: string;
-    }) => {
-      if (!name.trim() || !email.trim() || !phone.trim() || !password.trim()) {
-        return { ok: false, error: 'Заполните все поля.' };
+    ({ email, password }: { email: string; password: string }) => {
+      const normalizedEmail = normalizeEmail(email);
+
+      if (!normalizedEmail || !password.trim()) {
+        return { ok: false, error: 'Введите Gmail и пароль.' };
+      }
+
+      if (!isGmailAddress(normalizedEmail)) {
+        return { ok: false, error: 'Для регистрации используйте адрес вида name@gmail.com.' };
+      }
+
+      if (password.trim().length < 6) {
+        return { ok: false, error: 'Пароль должен содержать минимум 6 символов.' };
       }
 
       const users = readUsers();
-      const exists = users.some((entry) => entry.email.toLowerCase() === email.toLowerCase().trim());
+      const exists = users.some((entry) => normalizeEmail(entry.email) === normalizedEmail);
 
       if (exists) {
-        return { ok: false, error: 'Пользователь с таким email уже существует.' };
+        return { ok: false, error: 'Пользователь с таким Gmail уже существует.' };
       }
 
       const nextUser: AuthStoredUser = {
         id: `user-${Date.now()}`,
-        name: name.trim(),
-        email: email.trim(),
-        phone: phone.trim(),
+        name: buildDisplayName(normalizedEmail),
+        email: normalizedEmail,
         password,
         role: 'traveler',
         createdAt: new Date().toISOString()

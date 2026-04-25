@@ -18,7 +18,7 @@ const footerGroups = [
     links: [
       { href: '/content', label: 'Видео' },
       { href: '/content?type=blog', label: 'Блоги' },
-      { href: '/content?type=ai-route', label: 'AI-маршруты' }
+      { href: '/#ai-assistant', label: 'AI-подбор' }
     ]
   },
   {

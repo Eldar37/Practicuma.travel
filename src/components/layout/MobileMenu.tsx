@@ -10,6 +10,7 @@ import { X } from 'lucide-react';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { Logo } from '@/components/layout/Logo';
 import { Button, buttonStyles } from '@/components/ui/Button';
+import { PARTNER_TELEGRAM_URL } from '@/lib/contacts';
 import { cn } from '@/lib/utils';
 
 interface MobileMenuProps {
@@ -97,9 +98,15 @@ export function MobileMenu({ open, setOpen, links }: MobileMenuProps) {
                   >
                     Войти
                   </button>
-                  <Link href="/partners" className={buttonStyles({ variant: 'primary', size: 'lg', fullWidth: true })} onClick={() => setOpen(false)}>
+                  <a
+                    href={PARTNER_TELEGRAM_URL}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={buttonStyles({ variant: 'primary', size: 'lg', fullWidth: true })}
+                    onClick={() => setOpen(false)}
+                  >
                     Стать партнёром
-                  </Link>
+                  </a>
                 </>
               )}
             </div>

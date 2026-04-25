@@ -21,7 +21,10 @@ export function Hero() {
     <section className="relative flex min-h-[calc(100vh-5rem)] items-center overflow-hidden">
       <div
         className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: "url('https://picsum.photos/seed/kyrgyzstan-mountain/1920/1080')" }}
+        style={{
+          backgroundImage:
+            "url('https://images.unsplash.com/photo-1588917085474-bc41e9f8d9b0?auto=format&fit=crop&fm=jpg&q=80&w=2000')"
+        }}
       />
       <div className="absolute inset-0 bg-hero-overlay" />
       <div className="container-shell relative z-10 py-20 text-white">
