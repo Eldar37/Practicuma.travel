@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
 import type { ReactNode } from 'react';
 
+import { FloatingAIAssistant } from '@/components/ai/FloatingAIAssistant';
 import { AuthProvider } from '@/components/auth/AuthProvider';
 import { Footer } from '@/components/layout/Footer';
 import { Navbar } from '@/components/layout/Navbar';
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <Navbar />
             <div className="min-h-screen pt-20">{children}</div>
             <Footer />
+            <FloatingAIAssistant />
           </AuthProvider>
         </SitePreferencesProvider>
       </body>
